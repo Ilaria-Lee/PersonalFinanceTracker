@@ -1,0 +1,107 @@
+<!-- FILE: src/main/resources/templates/dashboard/index.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <h1 class="h3 mb-3">Dashboard</h1>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h6 text-muted">Current Month Total (€)</h2>
+                    <p class="h4 mb-0" th:text="${#numbers.formatDecimal(data.currentMonthTotal, 1, 'COMMA', 2, 'POINT')}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h6 text-muted">Previous Month Total (€)</h2>
+                    <p class="h4 mb-0" th:text="${#numbers.formatDecimal(data.previousMonthTotal, 1, 'COMMA', 2, 'POINT')}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h6 text-muted">Difference (€)</h2>
+                    <p class="h4 mb-0"
+                       th:classappend="${data.monthOverMonthDifference.compareTo(T(java.math.BigDecimal).ZERO) > 0} ? ' text-danger' : ' text-success'"
+                       th:text="${#numbers.formatDecimal(data.monthOverMonthDifference, 1, 'COMMA', 2, 'POINT')}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-warning mb-4" th:if="${#lists.size(data.budgetProgress.?[alertThresholdReached]) > 0}">
+        <div class="card-header bg-warning-subtle">Budget Alerts</div>
+        <div class="card-body">
+            <ul class="mb-0">
+                <li th:each="progress : ${data.budgetProgress}" th:if="${progress.alertThresholdReached}" th:text="${progress.categoryName + ': ' + progress.percentage + '% of budget used.'}"></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h5">Expenses by Category for the current month</h2>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h5">Last 6 Months</h2>
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var categoryData = /*[[${categoryDataJson}]]*/'{}';
+        var monthlyData = /*[[${monthlyDataJson}]]*/'{}';
+        /*]]>*/
+
+        var parsedCategoryData = typeof categoryData === 'string' ? JSON.parse(categoryData) : categoryData;
+        var parsedMonthlyData = typeof monthlyData === 'string' ? JSON.parse(monthlyData) : monthlyData;
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(parsedCategoryData),
+                datasets: [{
+                    data: Object.values(parsedCategoryData),
+                    backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1', '#20c997', '#fd7e14']
+                }]
+            }
+        });
+
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'bar',
+            data: {
+                labels: parsedMonthlyData.map(function (item) { return item.monthLabel; }),
+                datasets: [{
+                    label: 'Total (€)',
+                    data: parsedMonthlyData.map(function (item) { return item.total; }),
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

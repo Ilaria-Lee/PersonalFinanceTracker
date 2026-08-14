@@ -1,0 +1,60 @@
+<!-- FILE: src/main/resources/templates/auth/login.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-12" style="max-width: 400px;">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h1 class="h4 text-center mb-4">Login</h1>
+
+                    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                        Invalid email or password
+                    </div>
+                    <div id="logout-success-message" th:if="${param.logout}" class="alert alert-success" role="alert">
+                        Logged out successfully
+                    </div>
+                    <div id="success-message" th:if="${registered}" class="alert alert-success" role="alert">
+                        Registration successful
+                    </div>
+
+                    <form th:action="@{/auth/login}" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" name="email" type="email" class="form-control" th:value="${param.email}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input id="password" name="password" type="password" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <p class="text-center mt-3 mb-0">
+                        No account?
+                        <a th:href="@{/auth/register}">Register here</a>
+                    </p>
+
+                        <script>
+                            // Mantieni l'email nel form anche dopo login fallito
+                            const emailInput = document.getElementById('email');
+                            const savedEmail = localStorage.getItem('lastEmail');
+                            if (savedEmail && !emailInput.value) {
+                                emailInput.value = savedEmail;
+                            }
+                        
+                            // Salva l'email quando viene inviato il form
+                            emailInput.addEventListener('change', function() {
+                                localStorage.setItem('lastEmail', this.value);
+                            });
+                        </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

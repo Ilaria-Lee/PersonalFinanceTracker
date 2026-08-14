@@ -1,0 +1,44 @@
+<!-- FILE: src/main/resources/templates/category/list.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <h1 class="h3 mb-3">Categories</h1>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form th:action="@{/categories/new}" th:object="${categoryDto}" method="post" class="row g-2">
+                <div class="col-12 col-md-8">
+                    <label class="form-label">New Category</label>
+                    <input type="text" class="form-control" th:field="*{name}" required>
+                </div>
+                <div class="col-12 col-md-4 d-grid align-self-end">
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cat : ${categories}">
+                <td th:text="${cat.name}"></td>
+                <td>
+                    <form th:action="@{'/categories/' + ${cat.id} + '/delete'}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

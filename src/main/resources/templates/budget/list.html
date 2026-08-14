@@ -1,0 +1,95 @@
+<!-- FILE: src/main/resources/templates/budget/list.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <h1 class="h3 mb-3">Budgets</h1>
+
+    <div class="alert alert-warning" th:if="${not #lists.isEmpty(alertCategories)}" role="alert">
+        <strong>Attenzione:</strong> hai superato l'80% del budget per:
+        <span th:each="alert, iter : ${alertCategories}">
+            <span th:text="${alert.categoryName}"></span><span th:if="${!iter.last}">, </span>
+        </span>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form th:action="@{/budgets/set}" th:object="${budgetDto}" method="post" class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" th:field="*{categoryId}">
+                        <option value="">Select category</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Month</label>
+                    <select class="form-select" th:field="*{month}">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2">
+                    <label class="form-label">Year</label>
+                    <input type="number" min="2000" class="form-control" th:field="*{year}">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Limit Amount (€)</label>
+                    <input type="number" step="0.01" class="form-control" th:field="*{limitAmount}">
+                </div>
+                <div class="col-12 col-md-1 d-grid align-self-end">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>Category</th>
+                <th>Limit (€)</th>
+                <th>Spent (€)</th>
+                <th>Remaining (€)</th>
+                <th>Progress</th>
+                <th>%</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="progress : ${budgetProgress}">
+                <td>
+                    <span th:text="${progress.categoryName}"></span>
+                    <span th:if="${progress.alertThresholdReached}" class="badge text-bg-warning ms-2">ALERT</span>
+                </td>
+                <td th:text="${#numbers.formatDecimal(progress.limitAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${#numbers.formatDecimal(progress.spent, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${#numbers.formatDecimal(progress.limitAmount.subtract(progress.spent), 1, 'COMMA', 2, 'POINT')}"></td>
+                <td style="min-width: 220px;">
+                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                         th:attr="aria-valuenow=${progress.percentage}">
+                        <div class="progress-bar"
+                             th:classappend="${progress.percentage >= 100} ? ' bg-danger' : (${progress.percentage >= 80} ? ' bg-warning' : ' bg-success')"
+                             th:style="'width: ' + ${progress.percentage} + '%'">
+                        </div>
+                    </div>
+                </td>
+                <td th:text="${progress.percentage}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

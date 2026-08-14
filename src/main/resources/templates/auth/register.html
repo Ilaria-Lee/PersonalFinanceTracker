@@ -1,0 +1,49 @@
+<!-- FILE: src/main/resources/templates/auth/register.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-12" style="max-width: 460px;">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h1 class="h4 text-center mb-4">Create Account</h1>
+
+                    <form th:action="@{/auth/register}" th:object="${registerDto}" method="post" novalidate>
+                        <!-- Field validation errors -->
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" class="alert alert-danger py-2">
+                            <span th:errors="*{confirmPassword}"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" type="email" class="form-control" th:field="*{email}" required>
+                            <div class="text-danger small" th:errors="*{email}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input id="password" type="password" class="form-control" th:field="*{password}" required>
+                            <div class="text-danger small" th:errors="*{password}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input id="confirmPassword" type="password" class="form-control" th:field="*{confirmPassword}" required>
+                            <div class="text-danger small" th:errors="*{confirmPassword}"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Register</button>
+                    </form>
+
+                    <p class="text-center mt-3 mb-0">
+                        Already registered?
+                        <a th:href="@{/auth/login}">Back to login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

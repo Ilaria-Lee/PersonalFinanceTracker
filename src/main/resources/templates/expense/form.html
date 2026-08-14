@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Expense Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="h3 mb-3" th:text="${expenseDto.id == null ? 'Add New Expense' : 'Edit Expense'}"></h1>
+
+    <form th:action="${expenseDto.id == null ? '/expenses/new' : '/expenses/' + expenseDto.id + '/edit'}"
+          th:object="${expenseDto}" method="post" class="row g-3">
+
+        <div class="col-md-6">
+            <label for="amount" class="form-label">Amount (€)</label>
+            <input type="number" step="0.01" class="form-control" id="amount" th:field="*{amount}" required>
+            <div class="text-danger small" th:errors="*{amount}"></div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date" th:value="${expenseDto.date}" required>
+            <div class="text-danger small" th:errors="*{date}"></div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="categoryId" class="form-label">Category</label>
+            <select class="form-select" id="categoryId" th:field="*{categoryId}" required>
+                <option value="">Select a category</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+            <div class="text-danger small" th:errors="*{categoryId}"></div>
+        </div>
+
+        <div class="col-12">
+            <label for="note" class="form-label">Note</label>
+            <textarea class="form-control" id="note" th:field="*{note}" rows="3"></textarea>
+            <div class="text-danger small" th:errors="*{note}"></div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Save Expense</button>
+            <a th:href="@{/expenses}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

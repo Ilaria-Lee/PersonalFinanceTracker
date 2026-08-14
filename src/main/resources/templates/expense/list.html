@@ -1,0 +1,98 @@
+<!-- FILE: src/main/resources/templates/expense/list.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Expenses</h1>
+        <a th:href="@{/expenses/new}" class="btn btn-primary">Add Expense</a>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <form th:action="@{/expenses}" method="get" class="row g-2 align-items-end mb-4">
+        <div class="col-12 col-md-3">
+            <label class="form-label">Category</label>
+            <select name="categoryId" class="form-select">
+                <option value="">All</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${selectedCategoryId != null and selectedCategoryId == cat.id}">
+                </option>
+            </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+            <label class="form-label">Month</label>
+            <select name="month" class="form-select">
+                <option value="">All</option>
+                <option value="1" th:selected="${selectedMonth == 1}">January</option>
+                <option value="2" th:selected="${selectedMonth == 2}">February</option>
+                <option value="3" th:selected="${selectedMonth == 3}">March</option>
+                <option value="4" th:selected="${selectedMonth == 4}">April</option>
+                <option value="5" th:selected="${selectedMonth == 5}">May</option>
+                <option value="6" th:selected="${selectedMonth == 6}">June</option>
+                <option value="7" th:selected="${selectedMonth == 7}">July</option>
+                <option value="8" th:selected="${selectedMonth == 8}">August</option>
+                <option value="9" th:selected="${selectedMonth == 9}">September</option>
+                <option value="10" th:selected="${selectedMonth == 10}">October</option>
+                <option value="11" th:selected="${selectedMonth == 11}">November</option>
+                <option value="12" th:selected="${selectedMonth == 12}">December</option>
+            </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+            <label class="form-label">Year</label>
+            <input type="number" name="year" class="form-control" min="2000" th:value="${selectedYear}">
+        </div>
+
+        <div class="col-12 col-md-auto d-flex gap-2">
+            <button type="submit" class="btn btn-outline-primary">Filter</button>
+            <a th:href="@{/expenses}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div th:if="${#lists.isEmpty(expenses)}" class="alert alert-info">
+        No expenses found.
+    </div>
+
+    <div th:if="${not #lists.isEmpty(expenses)}" class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Amount (€)</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="expense : ${expenses}">
+                <td th:text="${expense.date}"></td>
+                <td th:text="${expense.category.name}"></td>
+                <td th:text="${#numbers.formatDecimal(expense.amount, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${expense.note}"></td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{'/expenses/' + ${expense.id} + '/edit'}">Edit</a>
+                        <form th:action="@{'/expenses/' + ${expense.id} + '/delete'}" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this expense?')">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

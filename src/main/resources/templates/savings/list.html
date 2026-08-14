@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Savings Goals</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div>
+        <h1 class="h3 mb-3">Savings Goals</h1>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Add New Goal</h2>
+                <form th:action="@{/savings/new}" th:object="${savingsGoalDto}" method="post" class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" required id="name" th:field="*{name}">
+                        <div class="text-danger small" th:errors="*{name}"></div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="targetAmount" class="form-label">Target Amount (€)</label>
+                        <input type="number" step="0.01" class="form-control" required id="targetAmount" th:field="*{targetAmount}">
+                        <div class="text-danger small" th:errors="*{targetAmount}"></div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="deadline" class="form-label">Deadline</label>
+                        <input type="date" class="form-control" required id="deadline" th:field="*{deadline}">
+                        <div class="text-danger small" th:errors="*{deadline}"></div>
+                    </div>
+                    <div class="col-12 col-md-2 d-grid align-self-end">
+                        <button type="submit" class="btn btn-primary">Create Goal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div th:each="goalWithProgress : ${goalList}" class="col-12 col-lg-6">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h3 class="h5 mb-0" th:text="${goalWithProgress.goal.name}"></h3>
+                            <form th:action="@{/savings/{id}/delete(id=${goalWithProgress.goal.id})}" method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this goal?')">Delete</button>
+                            </form>
+                        </div>
+
+                        <p class="mb-1">Target: € <span th:text="${#numbers.formatDecimal(goalWithProgress.goal.targetAmount, 1, 'COMMA', 2, 'POINT')}"></span></p>
+                        <p class="mb-1">Contributed: € <span th:text="${#numbers.formatDecimal(goalWithProgress.totalContributions, 1, 'COMMA', 2, 'POINT')}"></span></p>
+                        <p class="mb-3">Deadline: <span th:text="${goalWithProgress.goal.deadline}"></span></p>
+
+                        <form th:action="@{/savings/{id}/edit(id=${goalWithProgress.goal.id})}" th:object="${savingsGoalDto}" method="post" class="row g-2 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" th:value="${goalWithProgress.goal.name}" required>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label class="form-label">Target (€)</label>
+                                <input type="number" step="0.01" class="form-control" name="targetAmount" th:value="${goalWithProgress.goal.targetAmount}" required>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label class="form-label">Deadline</label>
+                                <input type="date" class="form-control" name="deadline" th:value="${goalWithProgress.goal.deadline}" required>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <button type="submit" class="btn btn-outline-secondary">Update Goal</button>
+                            </div>
+                        </form>
+
+                        <div class="progress mb-3" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:aria-valuenow="${goalWithProgress.progressPercentage}">
+                            <div class="progress-bar bg-success" th:style="'width: ' + ${goalWithProgress.progressPercentage} + '%'" th:text="${#numbers.formatDecimal(goalWithProgress.progressPercentage, 1, 'COMMA', 1, 'POINT')} + '%'"></div>
+                        </div>
+
+                        <form th:action="@{/savings/{id}/contribute(id=${goalWithProgress.goal.id})}" th:object="${savingsContributionDto}" method="post" class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label for="contributionAmount" class="form-label">Amount (€)</label>
+                                <input type="number" name="amount" step="0.01" class="form-control" id="contributionAmount" th:field="*{amount}" required>
+                                <div class="text-danger small" th:errors="*{amount}"></div>
+                            </div>
+                            <div class="col-6">
+                                <label for="contributionDate" class="form-label">Date</label>
+                                <input type="date" name="date" class="form-control" id="contributionDate" th:value="${savingsContributionDto.date}" required>
+                                <div class="text-danger small" th:errors="*{date}"></div>
+                            </div>
+                            <div class="col-12 d-grid">
+                                <button type="submit" class="btn btn-outline-primary">Add Contribution</button>
+                            </div>
+                        </form>
+
+                        <div>
+                            <h4 class="h6">Contributions</h4>
+                            <ul class="list-group list-group-flush" th:if="${!goalWithProgress.contributions.empty}">
+                                <li class="list-group-item d-flex justify-content-between align-items-center" th:each="contribution : ${goalWithProgress.contributions}">
+                                    <span th:text="${#temporals.format(contribution.date, 'dd/MM/yyyy')}"></span>
+                                    <span th:text="${#numbers.formatDecimal(contribution.amount, 1, 'COMMA', 2, 'POINT')} + ' €'"></span>
+                                </li>
+                            </ul>
+                            <p class="text-muted small mb-0" th:if="${goalWithProgress.contributions.empty}">No contributions yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

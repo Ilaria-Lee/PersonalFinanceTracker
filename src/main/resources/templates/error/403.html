@@ -1,0 +1,15 @@
+<!-- FILE: src/main/resources/templates/error/403.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+        <div class="text-center">
+            <h1 class="display-5">403</h1>
+            <p class="lead">Access denied.</p>
+            <a th:href="@{/dashboard}" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
