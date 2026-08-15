@@ -24,6 +24,13 @@ Feature: UC08 - Manage categories
     Then I should be redirected to "/categories"
     And I should see text "Category already exists"
 
+  Scenario: Delete an unused category
+    Given category "Gym" exists for the logged-in user
+    When I click the "Delete" action for category "Gym"
+    Then I should be redirected to "/categories"
+    And I should see text "Category deleted successfully"
+    And I should not see category "Gym" in the category table
+
   Scenario: Cannot delete category in use
     Given category "Groceries" exists for the logged-in user
     And an expense exists for the logged-in user with category "Groceries" amount "45.90" date "2024-01-15" note "Market"

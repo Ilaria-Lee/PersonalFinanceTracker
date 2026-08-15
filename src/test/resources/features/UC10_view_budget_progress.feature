@@ -14,7 +14,4 @@ Feature: UC10 - View budget progress
     And I am on the "Budgets" page at "/budgets"
 
   Scenario: View budget progress for current month
-    Then I should see budget row with category "Groceries" and limit "100.00"
-    And I should see text "55.00"
-    And I should see text "45.00"
-    And I should see text "55.0"
+    Then I should see budget progress for category "Groceries" with limit "100.00" spent "55.00" remaining "45.00" and percentage "55.0"

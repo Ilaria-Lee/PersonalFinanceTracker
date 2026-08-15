@@ -26,4 +26,8 @@ public class LoginPage extends BasePage {
     public void clickLogin() {
         click(LOGIN_BUTTON);
     }
+
+    public String getEmailValue() {
+        return waitForElement(EMAIL_INPUT).getAttribute("value");
+    }
 }

@@ -22,3 +22,8 @@ Feature: UC02 - User login
     And I click the "Login" button
     Then I should remain on "/auth/login"
     And I should see text "Invalid email or password"
+    And the email field should contain "login.user@example.com"
+
+  Scenario: Anonymous users cannot access a protected page
+    When I open "/dashboard"
+    Then I should be redirected to "/auth/login"

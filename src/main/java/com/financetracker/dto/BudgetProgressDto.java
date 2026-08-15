@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BudgetProgressDto {
 
+    private Long budgetId;
     private String categoryName;
     private BigDecimal limitAmount;
     private BigDecimal spent;

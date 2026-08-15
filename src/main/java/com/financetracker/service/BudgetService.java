@@ -59,6 +59,7 @@ public class BudgetService {
             BigDecimal percentage = calculatePercentage(spent, budget.getLimitAmount());
 
             progress.add(new BudgetProgressDto(
+                    budget.getId(),
                     categoryName,
                     budget.getLimitAmount(),
                     spent,

@@ -1,6 +1,8 @@
 // FILE: src/test/java/com/financetracker/steps/AuthSteps.java
 package com.financetracker.steps;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.financetracker.pages.BudgetPage;
 import com.financetracker.pages.BasePage;
 import com.financetracker.pages.CategoryPage;
@@ -10,6 +12,7 @@ import com.financetracker.pages.ExpenseListPage;
 import com.financetracker.pages.LoginPage;
 import com.financetracker.pages.RegisterPage;
 import io.cucumber.java.en.When;
+import io.cucumber.java.en.Then;
 import org.openqa.selenium.WebDriver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,5 +166,10 @@ public class AuthSteps {
         }
 
         throw new IllegalStateException("Unsupported button step: " + buttonText + " on " + url);
+    }
+
+    @Then("the email field should contain {string}")
+    public void theEmailFieldShouldContain(String expectedEmail) {
+        assertEquals(expectedEmail, new LoginPage(webDriver).getEmailValue());
     }
 }

@@ -15,6 +15,7 @@ public class BudgetPage extends BasePage {
     private static final By LIMIT_AMOUNT_INPUT = By.name("limitAmount");
     private static final By SAVE_BUTTON = By.cssSelector("button.btn-primary");
     private static final By BUDGET_TABLE_ROWS = By.cssSelector("table tbody tr");
+    private static final By DELETE_BUTTON_IN_ROW = By.cssSelector("button.btn-outline-danger");
 
     public BudgetPage(WebDriver driver) {
         super(driver);
@@ -49,5 +50,41 @@ public class BudgetPage extends BasePage {
             }
         }
         return false;
+    }
+
+    public boolean hasBudgetProgressRow(
+            String categoryName,
+            String limit,
+            String spent,
+            String remaining,
+            String percentage
+    ) {
+        for (WebElement row : waitForElements(BUDGET_TABLE_ROWS)) {
+            List<WebElement> cells = row.findElements(By.tagName("td"));
+            if (cells.size() >= 6
+                    && cells.get(0).getText().contains(categoryName)
+                    && cells.get(1).getText().trim().equals(limit)
+                    && cells.get(2).getText().trim().equals(spent)
+                    && cells.get(3).getText().trim().equals(remaining)
+                    && cells.get(5).getText().trim().equals(percentage)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasBudgetForCategory(String categoryName) {
+        return waitForElements(BUDGET_TABLE_ROWS).stream()
+                .anyMatch(row -> row.getText().contains(categoryName));
+    }
+
+    public void clickDeleteForCategory(String categoryName) {
+        for (WebElement row : waitForElements(BUDGET_TABLE_ROWS)) {
+            if (row.getText().contains(categoryName)) {
+                clickElement(row.findElement(DELETE_BUTTON_IN_ROW));
+                return;
+            }
+        }
+        throw new IllegalStateException("Budget row not found for category: " + categoryName);
     }
 }

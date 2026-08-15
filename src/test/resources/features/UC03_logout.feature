@@ -14,3 +14,5 @@ Feature: UC03 - Logout
     When I click the "Logout" button
     Then I should be redirected to "/auth/login?logout=true"
     And I should see text "Logged out successfully"
+    When I open "/dashboard"
+    Then I should be redirected to "/auth/login"

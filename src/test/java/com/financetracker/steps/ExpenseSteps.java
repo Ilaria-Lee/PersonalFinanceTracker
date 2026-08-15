@@ -10,6 +10,7 @@ import com.financetracker.pages.ExpenseListPage;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.datatable.DataTable;
 import java.time.Month;
 import java.util.Locale;
 import org.openqa.selenium.WebDriver;
@@ -141,6 +142,14 @@ public class ExpenseSteps {
     @Then("I should not see expense note {string} in the expense table")
     public void iShouldNotSeeExpenseNoteInTheExpenseTable(String note) {
         assertFalse(new ExpenseListPage(webDriver).hasExpenseNote(note));
+    }
+
+    @Then("the expense notes should appear in this order:")
+    public void theExpenseNotesShouldAppearInThisOrder(DataTable dataTable) {
+        java.util.List<String> expectedNotes = dataTable.asLists().stream()
+                .map(row -> row.get(0))
+                .toList();
+        assertTrue(new ExpenseListPage(webDriver).hasExpenseNotesInOrder(expectedNotes));
     }
 
     @And("I click the {string} button for goal {string}")

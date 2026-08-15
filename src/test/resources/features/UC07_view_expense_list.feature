@@ -19,6 +19,10 @@ Feature: UC07 - View and filter expense list
     Then I should see expense note "Weekly shopping" in the expense table
     And I should see expense note "Bus pass" in the expense table
     And I should see expense note "Market" in the expense table
+    And the expense notes should appear in this order:
+      | Weekly shopping |
+      | Bus pass        |
+      | Market          |
 
   Scenario: Filter by category and month/year
     When I select "Groceries" from dropdown "Category"

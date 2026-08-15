@@ -69,7 +69,6 @@ public class ExpenseController {
         try {
             expenseService.createExpense(expenseDto, user);
             redirectAttributes.addFlashAttribute("successMessage", "Expense added successfully");
-            System.out.println(">>> Flash attribute added, redirecting to /expenses");
             return "redirect:/expenses";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -81,9 +80,7 @@ public class ExpenseController {
     public String editExpenseForm(@PathVariable Long id, Model model) {
         User user = authService.getCurrentUser();
         Expense expense = expenseService.findByIdAndUser(id, user);
-        System.out.println(">>> expense.getDate() = " + expense.getDate());
         ExpenseDto dto = expenseService.toDto(expense);
-        System.out.println(">>> dto.getDate() = " + dto.getDate());
         
         model.addAttribute("expenseDto", dto);
         model.addAttribute("categories", categoryService.getCategoriesForUser(user));

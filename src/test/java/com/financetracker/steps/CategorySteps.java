@@ -2,6 +2,7 @@
 package com.financetracker.steps;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.financetracker.pages.CategoryPage;
 import io.cucumber.java.en.Then;
@@ -25,5 +26,10 @@ public class CategorySteps {
     @Then("I should see category {string} in the category table")
     public void iShouldSeeCategoryInTheCategoryTable(String categoryName) {
         assertTrue(new CategoryPage(webDriver).hasCategory(categoryName));
+    }
+
+    @Then("I should not see category {string} in the category table")
+    public void iShouldNotSeeCategoryInTheCategoryTable(String categoryName) {
+        assertFalse(new CategoryPage(webDriver).hasCategory(categoryName));
     }
 }

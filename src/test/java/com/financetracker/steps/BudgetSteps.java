@@ -1,6 +1,7 @@
 // FILE: src/test/java/com/financetracker/steps/BudgetSteps.java
 package com.financetracker.steps;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.financetracker.pages.BudgetPage;
@@ -19,6 +20,30 @@ public class BudgetSteps {
     @Then("I should see budget row with category {string} and limit {string}")
     public void iShouldSeeBudgetRowWithCategoryAndLimit(String category, String limit) {
         assertTrue(new BudgetPage(webDriver).hasBudgetRow(category, limit));
+    }
+
+    @Then("I should see budget progress for category {string} with limit {string} spent {string} remaining {string} and percentage {string}")
+    public void iShouldSeeBudgetProgress(
+            String category,
+            String limit,
+            String spent,
+            String remaining,
+            String percentage
+    ) {
+        assertTrue(new BudgetPage(webDriver).hasBudgetProgressRow(category, limit, spent, remaining, percentage));
+    }
+
+    @When("I click the {string} action for budget category {string}")
+    public void iClickTheActionForBudgetCategory(String action, String category) {
+        if (!"Delete".equals(action)) {
+            throw new IllegalArgumentException("Unsupported budget action: " + action);
+        }
+        new BudgetPage(webDriver).clickDeleteForCategory(category);
+    }
+
+    @Then("I should not see a budget row for category {string}")
+    public void iShouldNotSeeABudgetRowForCategory(String category) {
+        assertFalse(new BudgetPage(webDriver).hasBudgetForCategory(category));
     }
 
     @When("I enter {string} into contribution field {string} for goal {string}")

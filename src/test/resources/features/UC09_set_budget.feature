@@ -1,7 +1,7 @@
 # FILE: src/test/resources/features/UC09_set_budget.feature
 Feature: UC09 - Set budget
   As an authenticated user
-  I want to set a monthly budget by category
+  I want to create, update, and delete a monthly budget by category
   So that I can monitor spending limits
 
   Background:
@@ -30,3 +30,11 @@ Feature: UC09 - Set budget
     And I click the "Save" button
     Then I should be redirected to "/budgets"
     And I should see budget row with category "Groceries" and limit "350.00"
+
+  Scenario: Delete an existing budget
+    Given a budget exists for category "Groceries" current month limit "300.00"
+    When I click the "Delete" action for budget category "Groceries"
+    And I accept the browser confirmation dialog
+    Then I should be redirected to "/budgets"
+    And I should see text "Budget deleted successfully"
+    And I should not see a budget row for category "Groceries"

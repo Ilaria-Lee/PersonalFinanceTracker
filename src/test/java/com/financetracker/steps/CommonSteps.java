@@ -23,6 +23,7 @@ import io.cucumber.java.AfterAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -92,6 +93,11 @@ public class CommonSteps {
                     "Page may require permission, or server may have redirected due to error."
             );
         }
+    }
+
+    @When("I open {string}")
+    public void iOpen(String path) {
+        new BasePage(webDriver).navigateTo(path);
     }
 
     @SuppressWarnings("null")

@@ -24,6 +24,10 @@ public class DashboardPage extends BasePage {
     private static final By GOAL_CONTRIBUTION_DATE_INPUT = By.cssSelector("input[name='date']");
     private static final By GOAL_ADD_CONTRIBUTION_BUTTON = By.cssSelector("button.btn-outline-primary");
     private static final By GOAL_CONTRIBUTION_ITEMS = By.cssSelector("ul.list-group li");
+    private static final By GOAL_EDIT_NAME_INPUT = By.cssSelector("form[action$='/edit'] input[name='name']");
+    private static final By GOAL_EDIT_TARGET_INPUT = By.cssSelector("form[action$='/edit'] input[name='targetAmount']");
+    private static final By GOAL_EDIT_DEADLINE_INPUT = By.cssSelector("form[action$='/edit'] input[name='deadline']");
+    private static final By GOAL_UPDATE_BUTTON = By.cssSelector("form[action$='/edit'] button.btn-outline-secondary");
 
     public DashboardPage(WebDriver driver) {
         super(driver);
@@ -119,6 +123,28 @@ public class DashboardPage extends BasePage {
             }
         }
         return false;
+    }
+
+    public void changeGoal(String currentName, String newName, String targetAmount, String deadline) {
+        WebElement card = findGoalCard(currentName);
+        WebElement nameInput = card.findElement(GOAL_EDIT_NAME_INPUT);
+        WebElement targetInput = card.findElement(GOAL_EDIT_TARGET_INPUT);
+        WebElement deadlineInput = card.findElement(GOAL_EDIT_DEADLINE_INPUT);
+
+        nameInput.clear();
+        nameInput.sendKeys(newName);
+        targetInput.clear();
+        targetInput.sendKeys(targetAmount);
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].value = arguments[1];"
+                        + "arguments[0].dispatchEvent(new Event('change', {bubbles:true}));",
+                deadlineInput,
+                deadline
+        );
+    }
+
+    public void clickUpdateGoal(String goalName) {
+        findGoalCard(goalName).findElement(GOAL_UPDATE_BUTTON).click();
     }
 
     private WebElement findGoalCard(String goalName) {

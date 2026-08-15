@@ -98,6 +98,17 @@ public class ExpenseListPage extends BasePage {
         return false;
     }
 
+    public boolean hasExpenseNotesInOrder(List<String> expectedNotes) {
+        int nextExpectedNote = 0;
+        for (WebElement row : waitForElements(EXPENSE_TABLE_ROWS)) {
+            if (nextExpectedNote < expectedNotes.size()
+                    && row.getText().contains(expectedNotes.get(nextExpectedNote))) {
+                nextExpectedNote++;
+            }
+        }
+        return nextExpectedNote == expectedNotes.size();
+    }
+
     public boolean hasExpenseRow(String category, String amount, String note) {
         List<WebElement> rows = waitForElements(EXPENSE_TABLE_ROWS);
         for (WebElement row : rows) {
